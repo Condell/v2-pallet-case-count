@@ -14,100 +14,70 @@ import java.util.regex.Pattern;
 public class App {
   public static void main(String[] args) {
     String pdfText = pdfToString();
-    int currentStartIndex = 0;
-    int prevStartIndex = 0;
-    // FIND INVOICE NUMBERS
     String invoiceNumber = "[0-9]{2}-[0-9]{8}";
-    // Line Number   \s[0-9]{3}\s
-
-    // Item Number   \s[0-9]{2}-[0-9]{5}\s
-
-    // Item Name   "(   \b([0-9]+\S.*?)|(   \b[a-zA-Z]+\S.*))\s+ "
-
-    // Ordered    (\d CS)   1
-    // Made    (\d CS)   2
-    // Scanned    (\d CS)   3
-
-
     Pattern invoiceNumPattern = Pattern.compile(invoiceNumber);
     Matcher invoiceNumMatcher = invoiceNumPattern.matcher(pdfText);
     ArrayList<String> lines = new ArrayList<>();
     ArrayList<InvoiceLine> invoiceLines = new ArrayList<>();
+    ArrayList<Integer> indexs = new ArrayList<>();
+    ArrayList<InvoiceLine> missingLines = new ArrayList<>();
+
+    String itemNumStart = "00-09 00-1 00-2 00-3 00-4 00-5 00-6 00-7 00-8 00-9 01- 02- 03- 04- 05-" +
+            " 06- 07- 08- 09- 10- 11- 12- 13- 14- 15- 28-12500 28-12510 28-00010 31- 32- 34- 36- " +
+            "37- 38- 43- 44- 45- 46- 47- 48- 49- 50- 51- 52- 53- 54- 57- 58- 70- 71- 72- 73- 74- " +
+            "75- 76- 77- 78- 79- 85-12180 88- 95- 96- 97- 98- 99- ";
+    String[] itemsSplit = itemNumStart.split(" ");
+
 
     while (invoiceNumMatcher.find()) {
-      //System.out.println("Found value start: " +
-      // invoiceNumMatcher.start() );
-      //System.out.println("Found value end: " + invoiceNumMatcher
-      // .end());
-
-      // CURRENT START INDEX
-      // Previous Start
-
-      if (currentStartIndex != prevStartIndex) {
-        currentStartIndex = invoiceNumMatcher.start();
-        String sub = pdfText.substring(prevStartIndex,
-                currentStartIndex
-        );
-        String[] strings = sub.split(" ");
-        lines.add(sub);
-
-
-        String invNum = "[0-9]{2}-[0-9]{8}";
-        Matcher invNumMatcher = Pattern.compile(invNum).matcher(sub);
-        boolean foundInvNum = invNumMatcher.find();
-        String invNumStr = invNumMatcher.group().trim();
-
-        String lineNum = "\\s[0-9]{3}\\s";
-        Matcher lineNumMatcher = Pattern.compile(lineNum).matcher(sub);
-        boolean foundLineNum = lineNumMatcher.find();
-        String lineNumStr = lineNumMatcher.group().trim();
-
-        String itemNum = "\\s[0-9]{2}-[0-9]{5}\\s";
-        Matcher itemNumMatcher = Pattern.compile(itemNum).matcher(sub);
-        boolean foundItemNum = itemNumMatcher.find();
-        String itemNumStr = itemNumMatcher.group().trim();
-
-        String itemName = "(   \\b([0-9]+\\S.*?)|(   \\b[a-zA-Z]+\\S.*))\\s+ ";
-        Matcher itemNameMatcher = Pattern.compile(itemName).matcher(sub);
-        boolean foundItemName = itemNameMatcher.find();
-        String itemNameStr = itemNameMatcher.group().trim();
-
-        //   ************* WORKING *************
-//        String lineNum = "\\s[0-9]{3}\\s";
-//        Pattern lineNumPat = Pattern.compile(lineNum);
-//        Matcher lineNumMatcher = lineNumPat.matcher(sub);
-//        boolean foundLineNo = lineNumMatcher.find();
-//        String matched = lineNumMatcher.group().trim();
-
-        InvoiceLine line = new InvoiceLine(invNumStr, lineNumStr, itemNumStr, itemNameStr);
-        invoiceLines.add(line);
-
-
-      }
-      prevStartIndex = invoiceNumMatcher.start();
-
-
+      indexs.add(invoiceNumMatcher.start());
     }
-    System.out.println(invoiceLines);
 
-//    String route = "[0-9]{2}-[0-9]{8}";
-//    Pattern routePattern = Pattern.compile(route);
-//    Matcher routeNumMatcher = invoiceNumPattern.matcher(routePattern);
-//    while (routeNumMatcher.find( )) {
-//      System.out.println("Found value: " + invoiceNumMatcher.group(0) );
-//    }
+    for (int i = 0; i < indexs.toArray().length; i++) {
+      try {
+        if (i == (indexs.toArray().length - 1)) {
+          String object = pdfText.substring(indexs.get(i));
+          InvoiceLine line = getLineObject(object);
+          invoiceLines.add(line);
+        } else {
+          String object = pdfText.substring(indexs.get(i), indexs.get(i + 1) - 1);
+          InvoiceLine line = getLineObject(object);
+          invoiceLines.add(line);
+        }
+      } catch (Exception ignored) {
+      }
+    }
 
+    for (String num : itemsSplit) {
+      for (InvoiceLine i : invoiceLines) {
+        if (i.getItemNum().startsWith(num)) {
+          missingLines.add(i);
+        }
+      }
+    }
+
+    Object[] linesArr = missingLines.toArray();
+    for (Object o : linesArr) {
+      InvoiceLine line = (InvoiceLine) o;
+      if ((line.getOrderedQty() != line.getMadeQty())) {
+        if (!line.getItemName().contains("SAMPLE")) {
+          if (!line.getItemName().contains("FREIGHT")) {
+            System.out.println(o);
+          }
+        }
+      }
+    }
 
     //System.out.println(pdfText);
 
   }
 
+
   private static String pdfToString() {
     String text = "";
     try {
-      PDDocument document = PDDocument.load(new File("C:\\Users" +
-              "\\cody" +
-              ".jewell\\Documents\\Programs\\v2-pallet-case-count\\v2-pallet-case-count\\V2.pdf"));
+      PDDocument document = PDDocument.load(new File("C:\\Users\\cody" +
+              ".jewell\\AppData\\Local\\Temp\\PRMSAA_591415532277.pdf"));
       PDFTextStripper stripper = new PDFTextStripper();
       text = stripper.getText(document);
 
@@ -117,5 +87,23 @@ public class App {
     }
     return text;
   }
-}
 
+  private static InvoiceLine getLineObject(String invLine) {
+
+    String invoiceNum = invLine.substring(0, 11).trim();
+    String lineNum = invLine.substring(12, 16).trim();
+    String itemNum = invLine.substring(17, 26).trim();
+    String itemName = invLine.substring(26, 72).trim();
+    int ordered = Integer.parseInt(invLine.substring(72, 74).trim());
+    int made = Integer.parseInt(invLine.substring(82, 84).trim());
+    int scanned = Integer.parseInt(invLine.substring(90, 92).trim());
+    String gfsItemNum = invLine.substring(105, 150).trim();
+
+
+    return new InvoiceLine(invoiceNum, lineNum, itemNum, itemName, ordered, made,
+            scanned, gfsItemNum);
+
+    // NEWEST ITEM NAME REGEX
+    //   "( \S+[^ \d{2}\- \d{3} \d{5}].+         (?=\d \QCS\E ))|( \S+[^ \d{2}\- \d{3} \d{5}].*?(?=\d\d \QCS\E ))"
+  }
+}
