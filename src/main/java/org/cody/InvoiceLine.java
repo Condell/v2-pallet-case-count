@@ -1,5 +1,7 @@
 package org.cody;
 
+import java.util.ArrayList;
+
 public class InvoiceLine {
   private String invNum;
   private String lineNum;
@@ -9,9 +11,10 @@ public class InvoiceLine {
   private int madeQty;
   private int scannedQty;
   private String gfsItem;
+  private ArrayList<Box> boxes;
 
   public InvoiceLine(String inv, String line, String itemNum, String itemName, int ordered,
-                     int made, int scanned, String gfsItem) {
+                     int made, int scanned, String gfsItem, ArrayList<Box> boxes) {
     this.invNum = inv;
     this.lineNum = line;
     this.itemNum = itemNum;
@@ -20,6 +23,7 @@ public class InvoiceLine {
     this.madeQty = made;
     this.scannedQty = scanned;
     this.gfsItem = gfsItem;
+    this.boxes = new ArrayList<>(boxes);
   }
 
   public int getOrderedQty() {
@@ -45,14 +49,15 @@ public class InvoiceLine {
   @Override
   public String toString() {
     return "InvoiceLine{" +
-            "invNum='" + invNum + '\'' + '\n' +
-            ", lineNum='" + lineNum + '\'' + '\n' +
-            ", itemNum='" + itemNum + '\'' + '\n' +
-            ", itemName='" + itemName + '\'' + '\n' +
-            ", orderedQty=" + orderedQty + '\n' +
-            ", madeQty=" + madeQty + '\n' +
-            ", scannedQty=" + scannedQty + "\n" +
-            ", gfsItem=" + gfsItem +
-            "}\n\n";
+            "invNum='" + invNum + '\'' +
+            ", lineNum='" + lineNum + '\'' +
+            ", itemNum='" + itemNum + '\'' +
+            ", itemName='" + itemName + '\'' +
+            ", orderedQty=" + orderedQty +
+            ", madeQty=" + madeQty +
+            ", scannedQty=" + scannedQty +
+            ", gfsItem='" + gfsItem + '\'' +
+            ", boxes=" + boxes +
+            '}';
   }
 }
