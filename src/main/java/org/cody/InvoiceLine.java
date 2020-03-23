@@ -46,6 +46,22 @@ public class InvoiceLine {
     return itemNum;
   }
 
+  public ArrayList<Box> getBoxes() {
+    return new ArrayList<>(boxes);
+  }
+
+  public String getInvNum() {
+    return invNum;
+  }
+
+  public String getLineNum() {
+    return lineNum;
+  }
+
+  public String getGfsItem() {
+    return gfsItem;
+  }
+
   @Override
   public String toString() {
     return "InvoiceLine{" +
