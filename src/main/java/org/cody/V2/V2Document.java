@@ -48,9 +48,10 @@ public class V2Document {
         int scanned = Integer.parseInt(line.substring(89, 92).trim());
         String status = line.substring(96, 108).trim();
         String gfsItemNum = line.substring(109, 150).trim();
+        String warehouse = line.substring(242, 245);
         ArrayList<org.cody.V2.Box> boxes = getBoxes(line);
         ItemLine invLine = new ItemLine(invoiceNum, lineNum, itemNum, itemName, ordered, made,
-            scanned, gfsItemNum, boxes);
+            scanned, gfsItemNum, warehouse, boxes);
         invLines.add(invLine);
       } catch (Exception e) {
       }
