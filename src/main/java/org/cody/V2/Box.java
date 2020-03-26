@@ -1,4 +1,4 @@
-package org.cody;
+package org.cody.V2;
 
 public class Box {
 

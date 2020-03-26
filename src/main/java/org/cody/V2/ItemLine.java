@@ -1,8 +1,9 @@
-package org.cody;
+package org.cody.V2;
 
 import java.util.ArrayList;
 
-public class InvoiceLine {
+public class ItemLine {
+
   private String invNum;
   private String lineNum;
   private String itemNum;
@@ -13,8 +14,8 @@ public class InvoiceLine {
   private String gfsItem;
   private ArrayList<Box> boxes;
 
-  public InvoiceLine(String inv, String line, String itemNum, String itemName, int ordered,
-                     int made, int scanned, String gfsItem, ArrayList<Box> boxes) {
+  public ItemLine(String inv, String line, String itemNum, String itemName, int ordered,
+      int made, int scanned, String gfsItem, ArrayList<Box> boxes) {
     this.invNum = inv;
     this.lineNum = line;
     this.itemNum = itemNum;
