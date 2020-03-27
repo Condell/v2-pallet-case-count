@@ -23,12 +23,13 @@ public class V2Printer {
     hiddenTextArea.append("Printed at: " + formattedDate + "\n\n\n");
     for (ItemLine line : lines) {
       hiddenTextArea.append("Missing Item Number " + missingNo + ":\n");
-      hiddenTextArea.append("Item Name:   " + line.getItemName() + "\n");
-      hiddenTextArea.append("Item Number:   " + line.getItemNum() + "\n");
       hiddenTextArea.append("Invoice Number:   " + line.getInvNum() + "\n");
       hiddenTextArea.append("Invoice Line:   " + line.getLineNum() + "\n");
+      hiddenTextArea.append("Item Number:   " + line.getItemNum() + "\n");
+      hiddenTextArea.append("Item Name:   " + line.getItemName() + "\n");
       hiddenTextArea.append("Ordered / Made / Load Scanned:  " + line.getOrderedQty() + "  /  "
           + line.getMadeQty() + "  /  " + line.getScannedQty() + "\n");
+      hiddenTextArea.append("Warehouse: " + line.getWarehouse());
       hiddenTextArea.append("\n\n\n");
       missingNo++;
     }
@@ -57,12 +58,13 @@ public class V2Printer {
         totalCaseCount += item.getCount();
       }
       hiddenTextArea.append("\n" + "PalletID:  " + key +
-          "\n Number of Cases: \t" + itemCount + "\n");
+          "\n          Number of Cases: \t" + itemCount + "\n"
+          + "                      GFS Item #       Halperns Item #        Case Quantity\n");
 
       for (Item item : palletsWithItems.get(key)) {
         if (item.getCount() > 0) {
           hiddenTextArea.append("\t" + item.getGfsNum() + " \t " + item.getHalpNum() +
-              " \t " + item.getCount() + "\n");
+              " \t               " + item.getCount() + "\n");
         }
       }
 

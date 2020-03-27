@@ -12,10 +12,11 @@ public class ItemLine {
   private int madeQty;
   private int scannedQty;
   private String gfsItem;
+  private String warehouse;
   private ArrayList<Box> boxes;
 
   public ItemLine(String inv, String line, String itemNum, String itemName, int ordered,
-      int made, int scanned, String gfsItem, ArrayList<Box> boxes) {
+      int made, int scanned, String gfsItem, String warehouse, ArrayList<Box> boxes) {
     this.invNum = inv;
     this.lineNum = line;
     this.itemNum = itemNum;
@@ -24,6 +25,7 @@ public class ItemLine {
     this.madeQty = made;
     this.scannedQty = scanned;
     this.gfsItem = gfsItem;
+    this.warehouse = warehouse;
     this.boxes = new ArrayList<>(boxes);
   }
 
@@ -59,6 +61,10 @@ public class ItemLine {
     return lineNum;
   }
 
+  public String getWarehouse() {
+    return warehouse;
+  }
+
   public String getGfsItem() {
     return gfsItem;
   }
@@ -66,8 +72,8 @@ public class ItemLine {
   @Override
   public String toString() {
     return "InvoiceLine{" +
-            "invNum='" + invNum + '\'' +
-            ", lineNum='" + lineNum + '\'' +
+        "invNum='" + invNum + '\'' +
+        ", lineNum='" + lineNum + '\'' +
             ", itemNum='" + itemNum + '\'' +
             ", itemName='" + itemName + '\'' +
             ", orderedQty=" + orderedQty +
