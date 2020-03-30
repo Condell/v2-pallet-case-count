@@ -14,10 +14,11 @@ import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.cody.V2.Item;
-import org.cody.V2.ItemLine;
+import org.cody.V2.OrderLine;
 import org.cody.V2.Pallet;
 import org.cody.V2.V2Document;
 
@@ -57,7 +58,7 @@ public class App {
 
   static void runApp(String fileName, int runNo) {
 
-    ArrayList<ItemLine> itemLines = new ArrayList<>();
+    ArrayList<OrderLine> orderLines = new ArrayList<>();
     ArrayList<String> palletsStr = new ArrayList<>();
     ArrayList<Pallet> pallets = new ArrayList<>();
 
@@ -67,14 +68,14 @@ public class App {
       doc = PDDocument.load(inputStream);
       String pdfText = stripPDF(doc);
       ArrayList<String> lines = V2Document.getLines(pdfText);
-      itemLines = V2Document.getInvoiceLines(lines);
+      orderLines = V2Document.getInvoiceLines(lines);
       doc.close();
     } catch (Exception e) {
       System.out.println("Caught exception " + e);
       System.out.println(e.getStackTrace());
     }
 
-    for (ItemLine line : itemLines) {
+    for (OrderLine line : orderLines) {
       for (org.cody.V2.Box box : line.getBoxes()) {
         String palletId = box.getPalletID();
         if (!palletsStr.contains(palletId)) {
@@ -88,7 +89,7 @@ public class App {
       pallets.add(pallet);
     }
 
-    for (ItemLine line : itemLines) {
+    for (OrderLine line : orderLines) {
       for (org.cody.V2.Box box : line.getBoxes()) {
         String palletId = box.getPalletID();
         for (Pallet pal : pallets) {
@@ -104,13 +105,19 @@ public class App {
     }
 
     if (runNo == 1) {
-      ArrayList<ItemLine> missingLines = V2Document.getMissingBIBO(itemLines);
+      ArrayList<OrderLine> missingLines = V2Document.getMissingBIBO(orderLines);
       V2Printer.printMissingLines(missingLines);
     }
 
     if (runNo == 2) {
       Map<String, ArrayList<Item>> items = V2Document.getItemsSummary(pallets);
-      V2Printer.printSummary(items);
+
+      // TODO: sort Map by pallet tag
+      TreeMap<String, ArrayList<Item>> sorted = new TreeMap<>(items);
+//      for (String str : sorted.keySet()){
+//        System.out.println(str);
+//      }
+      V2Printer.printSummary(sorted);
     }
     //printDetailedPalletInfo(items);
   }

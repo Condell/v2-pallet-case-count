@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.Map;
 import javax.swing.JTextArea;
 import org.cody.V2.Item;
-import org.cody.V2.ItemLine;
+import org.cody.V2.OrderLine;
 
 public class V2Printer {
 
-  public static void printMissingLines(ArrayList<ItemLine> lines) {
+  public static void printMissingLines(ArrayList<OrderLine> lines) {
     JTextArea hiddenTextArea = new JTextArea();
     Font font = new Font("Arial", Font.PLAIN, 10);
     hiddenTextArea.setFont(font);
@@ -21,7 +21,7 @@ public class V2Printer {
     DateTimeFormatter formatObj = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
     String formattedDate = dateObj.format(formatObj);
     hiddenTextArea.append("Printed at: " + formattedDate + "\n\n\n");
-    for (ItemLine line : lines) {
+    for (OrderLine line : lines) {
       hiddenTextArea.append("Missing Item Number " + missingNo + ":\n");
       hiddenTextArea.append("Invoice Number:   " + line.getInvNum() + "\n");
       hiddenTextArea.append("Invoice Line:   " + line.getLineNum() + "\n");

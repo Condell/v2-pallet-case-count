@@ -2,7 +2,7 @@ package org.cody.V2;
 
 import java.util.ArrayList;
 
-public class ItemLine {
+public class OrderLine {
 
   private String invNum;
   private String lineNum;
@@ -15,7 +15,7 @@ public class ItemLine {
   private String warehouse;
   private ArrayList<Box> boxes;
 
-  public ItemLine(String inv, String line, String itemNum, String itemName, int ordered,
+  public OrderLine(String inv, String line, String itemNum, String itemName, int ordered,
       int made, int scanned, String gfsItem, String warehouse, ArrayList<Box> boxes) {
     this.invNum = inv;
     this.lineNum = line;

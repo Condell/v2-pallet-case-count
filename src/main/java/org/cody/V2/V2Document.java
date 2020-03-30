@@ -31,9 +31,9 @@ public class V2Document {
     return lines;
   }
 
-  public static ArrayList<ItemLine> getInvoiceLines(ArrayList<String> invoiceLines) {
+  public static ArrayList<OrderLine> getInvoiceLines(ArrayList<String> invoiceLines) {
     String[] lines = invoiceLines.toArray(new String[0]);
-    ArrayList<ItemLine> invLines = new ArrayList<>();
+    ArrayList<OrderLine> invLines = new ArrayList<>();
     for (String line : lines) {
       String invoiceNum = line.substring(0, 11).trim();
       String lineNum = line.substring(12, 16).trim();
@@ -50,7 +50,7 @@ public class V2Document {
         String gfsItemNum = line.substring(109, 150).trim();
         String warehouse = line.substring(242, 245);
         ArrayList<org.cody.V2.Box> boxes = getBoxes(line);
-        ItemLine invLine = new ItemLine(invoiceNum, lineNum, itemNum, itemName, ordered, made,
+        OrderLine invLine = new OrderLine(invoiceNum, lineNum, itemNum, itemName, ordered, made,
             scanned, gfsItemNum, warehouse, boxes);
         invLines.add(invLine);
       } catch (Exception e) {
@@ -145,7 +145,7 @@ public class V2Document {
     return boxes;
   }
 
-  public static ArrayList<ItemLine> getMissingBIBO(ArrayList<ItemLine> itemLines) {
+  public static ArrayList<OrderLine> getMissingBIBO(ArrayList<OrderLine> orderLines) {
     String itemNumStart = "00-09 00-1 00-2 00-3 00-4 00-5 00-6 00-7 00-8 00-9 01- 02- 03- 04- 05-" +
         " 06- 07- 08- 09- 10- 11- 12- 13- 14- 15- 28-12500 28-12510 28-00010 31- 32- 34- 36- " +
         "37- 38- 43- 44- 45- 46- 47- 48- 49- 50- 51- 52- 53- 54- 57- 58- 70- 71- 72- 73- 74- " +
@@ -153,10 +153,10 @@ public class V2Document {
 
     String[] itemsSplit = itemNumStart.split(" ");
 
-    ArrayList<ItemLine> missingLines = new ArrayList<>();
+    ArrayList<OrderLine> missingLines = new ArrayList<>();
 
     for (String num : itemsSplit) {
-      for (ItemLine i : itemLines) {
+      for (OrderLine i : orderLines) {
         if ((i.getItemNum().startsWith(num)) && (i.getOrderedQty() != i.getMadeQty())) {//i
           // .getItemNum()
           // .startsWith(num)) {
